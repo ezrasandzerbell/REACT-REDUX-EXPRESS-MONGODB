@@ -701,25 +701,17 @@ function compose() {
 
 var _redux = __webpack_require__(8);
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _index = __webpack_require__(24);
 
-//STEP 3 define reducers
-var reducer = function reducer() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
-  var action = arguments[1];
+var _index2 = _interopRequireDefault(_index);
 
-  switch (action.type) {
-    case "POST_BOOK":
-      // let books = state.books.concat(action.payload)
-      // return books;
-      return { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)) };
-      break;
-  }
-  return state;
-};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 //STEP 1 create the store
 
-var store = (0, _redux.createStore)(reducer);
+var store = (0, _redux.createStore)(_index2.default);
+
+// Import combinedReducers
 
 store.subscribe(function () {
   console.log('current state is:', store.getState());
@@ -742,13 +734,16 @@ store.dispatch({
 });
 
 store.dispatch({
-  type: "POST_BOOK",
-  payload: [{
-    id: 3,
-    title: 'this is the third title yo',
-    description: 'said this is the third description, jo!',
-    price: 12.5
-  }]
+  type: "DELETE_BOOK",
+  payload: { id: 1 }
+});
+
+store.dispatch({
+  type: "UPDATE_BOOK",
+  payload: {
+    id: 2,
+    title: "Learn React!"
+  }
 });
 
 /***/ }),
@@ -1359,6 +1354,92 @@ function applyMiddleware() {
       });
     };
   };
+}
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _redux = __webpack_require__(8);
+
+var _booksReducers = __webpack_require__(25);
+
+// here combined the reducers
+
+exports.default = (0, _redux.combineReducers)({
+  books: _booksReducers.booksReducers
+});
+
+// here import REDUCERS to be combined
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.booksReducers = booksReducers;
+
+var _redux = __webpack_require__(8);
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+// books reducers
+
+function booksReducers() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
+  var action = arguments[1];
+
+  switch (action.type) {
+    case "POST_BOOK":
+      // let books = state.books.concat(action.payload)
+      // return books;
+      return { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)) };
+      break;
+    case "DELETE_BOOK":
+      //create a copy of the current array of books
+      var currentBookToDelete = [].concat(_toConsumableArray(state.books));
+      //determine at which index in array this book should be deleted
+      var indexToDelete = currentBookToDelete.findIndex(function (book) {
+        return book.id === action.payload.id;
+      });
+      return { books: [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1))) };
+      break;
+
+    case "UPDATE_BOOK":
+      //create a copy of the current array of books
+      var currentBookToUpdate = [].concat(_toConsumableArray(state.books));
+      //determine at which index in array this book should be updated
+      var indexToUpdate = currentBookToUpdate.findIndex(function (book) {
+        return book.id === action.payload.id;
+      });
+
+      // Create a new book object with the new values and with the same array index of the item we want to replace. To achieve this we will use ...spread but we could use concat method too.
+
+      var newBookToUpdate = _extends({}, currentBookToUpdate[indexToUpdate], {
+        title: action.payload.title
+
+        // this log shows what the newBookToUpdate looks like
+      });console.log("What is newBookToUpdate:", newBookToUpdate);
+
+      return { books: [].concat(_toConsumableArray(currentBookToUpdate.slice(0, indexToUpdate)), [newBookToUpdate], _toConsumableArray(currentBookToUpdate.slice(indexToUpdate + 1))) };
+      break;
+  }
+  return state;
 }
 
 /***/ })
