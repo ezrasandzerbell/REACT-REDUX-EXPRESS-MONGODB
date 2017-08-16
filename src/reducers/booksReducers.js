@@ -2,12 +2,26 @@
 import {createStore} from 'redux';
 // books reducers
 
-export function booksReducers(state={books:[]}, action){
+export function booksReducers(state=
+  {
+    books:
+    [{
+      id: 1,
+      title: 'this is the title yo',
+      description: 'said this is the description, jo!',
+      price: 10.5
+    },
+    {
+      id: 2,
+      title: 'second title',
+      description: 'second description!',
+      price: 15
+    }]
+  }, action){
   switch (action.type){
-    case "POST_BOOK":
-    // let books = state.books.concat(action.payload)
-    // return books;
-    return {books: [...state.books, ...action.payload]}
+
+    case "GET_BOOKS":
+    return {...state, books:[...state.books]}
     break;
     case "DELETE_BOOK":
     //create a copy of the current array of books
