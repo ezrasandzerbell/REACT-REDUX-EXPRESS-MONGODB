@@ -24846,6 +24846,9 @@ function booksReducers() {
     case "GET_BOOKS":
       return _extends({}, state, { books: [].concat(_toConsumableArray(state.books)) });
       break;
+    case "POST_BOOKS":
+      return { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)) };
+      break;
     case "DELETE_BOOK":
       //create a copy of the current array of books
       var currentBookToDelete = [].concat(_toConsumableArray(state.books));
@@ -24939,11 +24942,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getBooks = getBooks;
+exports.postBooks = postBooks;
 exports.deleteBooks = deleteBooks;
 exports.updateBooks = updateBooks;
 function getBooks() {
   return {
     type: "GET_BOOK"
+  };
+}
+
+function postBooks(book) {
+  return {
+    type: "POST_BOOKS",
+    payload: book
   };
 }
 
@@ -43988,6 +43999,14 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactBootstrap = __webpack_require__(351);
 
+var _reactRedux = __webpack_require__(87);
+
+var _redux = __webpack_require__(33);
+
+var _booksActions = __webpack_require__(230);
+
+var _reactDom = __webpack_require__(112);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44006,6 +44025,16 @@ var BooksForm = function (_React$Component) {
   }
 
   _createClass(BooksForm, [{
+    key: 'handleSubmit',
+    value: function handleSubmit() {
+      var book = [{
+        title: (0, _reactDom.findDOMNode)(this.refs.title).value,
+        description: (0, _reactDom.findDOMNode)(this.refs.description).value,
+        price: (0, _reactDom.findDOMNode)(this.refs.price).value
+      }];
+      this.props.postBooks(book);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -44034,7 +44063,7 @@ var BooksForm = function (_React$Component) {
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
               null,
-              'Title'
+              'Description'
             ),
             _react2.default.createElement(_reactBootstrap.FormControl, {
               type: 'text',
@@ -44048,7 +44077,7 @@ var BooksForm = function (_React$Component) {
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
               null,
-              'Title'
+              'Price'
             ),
             _react2.default.createElement(_reactBootstrap.FormControl, {
               type: 'text',
@@ -44058,7 +44087,7 @@ var BooksForm = function (_React$Component) {
           ),
           _react2.default.createElement(
             _reactBootstrap.Button,
-            { bsStyle: 'primary' },
+            { onClick: this.handleSubmit.bind(this), bsStyle: 'primary' },
             'Save Book'
           )
         )
@@ -44069,7 +44098,11 @@ var BooksForm = function (_React$Component) {
   return BooksForm;
 }(_react2.default.Component);
 
-exports.default = BooksForm;
+function mapDispatchToProps(dispatch) {
+  return (0, _redux.bindActionCreators)({ postBooks: _booksActions.postBooks }, dispatch);
+}
+
+exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(BooksForm);
 
 /***/ })
 /******/ ]);

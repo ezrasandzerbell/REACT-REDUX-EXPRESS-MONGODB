@@ -23,6 +23,9 @@ export function booksReducers(state=
     case "GET_BOOKS":
     return {...state, books:[...state.books]}
     break;
+    case "POST_BOOKS":
+    return {books:[...state.books, ...action.payload]}
+    break;
     case "DELETE_BOOK":
     //create a copy of the current array of books
     const currentBookToDelete = [...state.books]
