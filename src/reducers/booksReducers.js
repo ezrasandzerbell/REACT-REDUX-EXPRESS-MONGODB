@@ -6,13 +6,13 @@ export function booksReducers(state=
   {
     books:
     [{
-      id: 1,
+      _id: 1,
       title: 'this is the title yo',
       description: 'said this is the description, jo!',
       price: 10.5
     },
     {
-      id: 2,
+      _id: 2,
       title: 'second title',
       description: 'second description!',
       price: 15

@@ -15325,10 +15325,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.addToCart = addToCart;
+exports.deleteCartItem = deleteCartItem;
 function addToCart(book) {
     return {
         type: "ADD_TO_CART",
         payload: book
+    };
+};
+
+// DELETE FROM cart
+function deleteCartItem(cart) {
+    return {
+        type: "DELETE_CART_ITEM",
+        payload: cart
     };
 }
 
@@ -32706,12 +32715,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function booksReducers() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
     books: [{
-      id: 1,
+      _id: 1,
       title: 'this is the title yo',
       description: 'said this is the description, jo!',
       price: 10.5
     }, {
-      id: 2,
+      _id: 2,
       title: 'second title',
       description: 'second description!',
       price: 15
@@ -32771,17 +32780,20 @@ function booksReducers() {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 exports.cartReducers = cartReducers;
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function cartReducers() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { cart: [] };
     var action = arguments[1];
 
     switch (action.type) {
         case "ADD_TO_CART":
-            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
+            return _extends({}, state, { cart: action.payload });
+            break;
+        case "DELETE_CART_ITEM":
+            return _extends({}, state, { cart: action.payload });
             break;
     }
 
@@ -32854,9 +32866,9 @@ var BooksList = function (_React$Component) {
       var booksList = this.props.books.map(function (booksArr) {
         return _react2.default.createElement(
           _reactBootstrap.Col,
-          { xs: 12, sm: 6, md: 4, key: booksArr.id },
+          { xs: 12, sm: 6, md: 4, key: booksArr._id },
           _react2.default.createElement(_bookItem2.default, {
-            id: booksArr.id,
+            _id: booksArr._id,
             title: booksArr.title,
             description: booksArr.description,
             price: booksArr.price
@@ -43958,10 +43970,11 @@ var BookItem = function (_React$Component) {
         key: 'handleCart',
         value: function handleCart() {
             var book = [].concat(_toConsumableArray(this.props.cart), [{
-                id: this.props._id,
+                _id: this.props._id,
                 title: this.props.title,
                 description: this.props.description,
-                price: this.props.price
+                price: this.props.price,
+                quantity: 1
             }]);
 
             this.props.addToCart(book);
@@ -44167,7 +44180,13 @@ var _reactRedux = __webpack_require__(73);
 
 var _reactBootstrap = __webpack_require__(105);
 
+var _redux = __webpack_require__(38);
+
+var _cartActions = __webpack_require__(174);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -44185,6 +44204,19 @@ var Cart = function (_React$Component) {
     }
 
     _createClass(Cart, [{
+        key: 'onDelete',
+        value: function onDelete(_id) {
+            //create a copy of the current array of books
+            var currentBookToDelete = this.props.cart;
+            //determine at which index in array this book should be deleted
+            var indexToDelete = currentBookToDelete.findIndex(function (cart) {
+                return cart._id === _id;
+            });
+            var cartAfterDelete = [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1)));
+
+            this.props.deleteCartItem(cartAfterDelete);
+        }
+    }, {
         key: 'render',
         value: function render() {
             if (this.props.cart[0]) {
@@ -44234,7 +44266,11 @@ var Cart = function (_React$Component) {
                                 'h6',
                                 null,
                                 'qty. ',
-                                _react2.default.createElement(_reactBootstrap.Label, { bsStyle: 'success' })
+                                _react2.default.createElement(
+                                    _reactBootstrap.Label,
+                                    { bsStyle: 'success' },
+                                    cartArr.quantity
+                                )
                             )
                         ),
                         _react2.default.createElement(
@@ -44260,14 +44296,14 @@ var Cart = function (_React$Component) {
                                 ),
                                 _react2.default.createElement(
                                     _reactBootstrap.Button,
-                                    { bsStyle: 'danger', bsSize: 'small' },
+                                    { onClick: this.onDelete.bind(this, cartArr._id), bsStyle: 'danger', bsSize: 'small' },
                                     'DELETE'
                                 )
                             )
                         )
                     )
                 );
-            });
+            }, this);
 
             return _react2.default.createElement(
                 _reactBootstrap.Panel,
@@ -44291,7 +44327,13 @@ function mapStateToProps(state) {
     };
 }
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(Cart);
+function mapDispatchToProps(dispatch) {
+    return (0, _redux.bindActionCreators)({
+        deleteCartItem: _cartActions.deleteCartItem
+    }, dispatch);
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Cart);
 
 /***/ })
 /******/ ]);
