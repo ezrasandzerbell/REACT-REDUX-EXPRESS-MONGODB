@@ -21,23 +21,25 @@ export function booksReducers(state=
   switch (action.type){
 
     case "GET_BOOKS":
-    return {...state, books:[...state.books]}
-    break;
+      return {...state, books:[...state.books]}
+      break;
+
     case "POST_BOOKS":
-    return {books:[...state.books, ...action.payload]}
-    break;
+      return {books:[...state.books, ...action.payload]}
+      break;
+
     case "DELETE_BOOK":
-    //create a copy of the current array of books
-    const currentBookToDelete = [...state.books]
-    //determine at which index in array this book should be deleted
-    const indexToDelete = currentBookToDelete.findIndex(
-      function(book) {
-        return book._id === action.payload._id;
-      }
-    )
-    return {books: [...currentBookToDelete.slice(0, indexToDelete),
-    ...currentBookToDelete.slice(indexToDelete + 1)]}
-    break;
+      //create a copy of the current array of books
+      const currentBookToDelete = [...state.books]
+      //determine at which index in array this book should be deleted
+      const indexToDelete = currentBookToDelete.findIndex(
+        function(book) {
+          return book._id == action.payload;
+        }
+      )
+      return {books: [...currentBookToDelete.slice(0, indexToDelete),
+      ...currentBookToDelete.slice(indexToDelete + 1)]}
+      break;
 
     case "UPDATE_BOOK":
     //create a copy of the current array of books
