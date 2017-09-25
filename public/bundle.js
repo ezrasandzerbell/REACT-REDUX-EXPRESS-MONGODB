@@ -44272,8 +44272,10 @@ var Cart = function (_React$Component) {
         }
     }, {
         key: 'onDecrement',
-        value: function onDecrement(_id) {
-            this.props.updateCart(_id, -1);
+        value: function onDecrement(_id, quantity) {
+            if (quantity > 1) {
+                this.props.updateCart(_id, -1);
+            }
         }
     }, {
         key: 'render',
@@ -44340,7 +44342,7 @@ var Cart = function (_React$Component) {
                                 { style: { minWidth: '300px' } },
                                 _react2.default.createElement(
                                     _reactBootstrap.Button,
-                                    { onClick: this.onDecrement.bind(this, cartArr._id), bsStyle: 'default', bsSize: 'small' },
+                                    { onClick: this.onDecrement.bind(this, cartArr._id, cartArr.quantity), bsStyle: 'default', bsSize: 'small' },
                                     '-'
                                 ),
                                 _react2.default.createElement(

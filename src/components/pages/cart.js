@@ -26,8 +26,10 @@ class Cart extends React.Component {
     this.props.updateCart(_id, 1);
   }
 
-  onDecrement(_id){
-    this.props.updateCart(_id, -1);
+  onDecrement(_id, quantity){
+    if(quantity > 1) {
+      this.props.updateCart(_id, -1);
+    }
   }
 
     render() {
@@ -54,7 +56,7 @@ class Cart extends React.Component {
                         </Col>
                         <Col xs={6} sm={4}>
                           <ButtonGroup style={{minWidth:'300px'}}>
-                            <Button onClick={this.onDecrement.bind(this, cartArr._id)} bsStyle="default" bsSize="small">-</Button>
+                            <Button onClick={this.onDecrement.bind(this, cartArr._id, cartArr.quantity)} bsStyle="default" bsSize="small">-</Button>
                             <Button onClick={this.onIncrement.bind(this, cartArr._id)} bsStyle="default" bsSize="small">+</Button>
                             <span>     </span>
                             <Button onClick={this.onDelete.bind(this, cartArr._id)} bsStyle="danger" bsSize="small">DELETE</Button>
